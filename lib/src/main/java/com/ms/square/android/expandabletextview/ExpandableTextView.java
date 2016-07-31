@@ -57,6 +57,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     protected ImageButton mButton; // Button to expand/collapse
 
+    protected TextView mTv2; //TextView to expand/collapse
+
     private boolean mRelayout;
 
     private boolean mCollapsed = true; // Show short version as default.
@@ -72,6 +74,10 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private Drawable mExpandDrawable;
 
     private Drawable mCollapseDrawable;
+
+    private String mExpandString = "看更多分類";
+
+    private String mCollapseString = "隱藏更多分類";
 
     private int mAnimationDuration;
 
@@ -114,10 +120,12 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         if (mButton.getVisibility() != View.VISIBLE) {
             return;
         }
-
+        if (mTv2.getVisibility() != View.VISIBLE) {
+            return;
+        }
         mCollapsed = !mCollapsed;
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
-
+        mTv2.setText(mCollapsed ? mExpandString : mCollapseString);
         if (mCollapsedStatus != null) {
             mCollapsedStatus.put(mPosition, mCollapsed);
         }
@@ -183,6 +191,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         // Setup with optimistic case
         // i.e. Everything fits. No button needed
         mButton.setVisibility(View.GONE);
+        mTv2.setVisibility(View.GONE);
         mTv.setMaxLines(Integer.MAX_VALUE);
 
         // Measure
@@ -202,7 +211,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             mTv.setMaxLines(mMaxCollapsedLines);
         }
         mButton.setVisibility(View.VISIBLE);
-
+        mTv2.setVisibility(View.VISIBLE);
         // Re-measure with new setup
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
@@ -236,6 +245,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         clearAnimation();
         mCollapsed = isCollapsed;
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
+        mTv2.setText(mCollapsed ? mExpandString : mCollapseString);
         setText(text);
         getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         requestLayout();
@@ -275,10 +285,12 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     private void findViews() {
         mTv = (TextView) findViewById(R.id.expandable_text);
-        mTv.setOnClickListener(this);
         mButton = (ImageButton) findViewById(R.id.expand_collapse);
         mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
         mButton.setOnClickListener(this);
+        mTv2 = (TextView) findViewById(R.id.expand_collapse_text);
+        mTv2.setText(mCollapsed ? mExpandString : mCollapseString);
+        mTv2.setOnClickListener(this);
     }
 
     private static boolean isPostHoneycomb() {
